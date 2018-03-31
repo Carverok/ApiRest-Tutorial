@@ -1,0 +1,22 @@
+<script type="text/javascript">
+    const header = new Headers();
+    header.append('Autorization', `Bearer ${localStorage.token}`)
+
+    let productList = document.createElement('ul')
+    
+    fetch('/api/products', {
+        method: 'GET',
+        headers: header
+    })
+    .then(res => res.json)
+    .then(data => {
+        if (data == undefined || data == null || data.length == 0) return console.log(`There is no data to show.`)
+
+        data.products.map(product => {
+            let text = document.createTextNode(produc.name)
+            let element = document.createElement('li')
+            element.appendChild(text)
+            productList.appendChild(element)
+        })
+    })
+</script>

@@ -10,6 +10,8 @@ function signUp (req, res){
         displayName: req.body.displayName
     })
 
+    user.avatar = user.gravatar()
+
     user.save((err) => {
         if (err) return res.status(500).send({message: `Cannot create user ${user.displayName}, error: ${err}`})
 
@@ -19,9 +21,15 @@ function signUp (req, res){
 
 function signIn (req, res) {
     let email = req.body.email
-    userModel.find({email: email}, (err, user) => {
+    let password = res.body.password
+    userModel.findOne({email: email}, (err, user) => {
         if (err) return res.status(500).send({message: err})
         if (!user) return res.status(404).send({message: `User doesn't exists.`})
+
+        return userModel.comparePassword(password, (err, isMatch) => {
+            if (err) return res.status(500).send({message: err})
+            if (!isMatch) return res.status(404).send({message: `Wrong password.`})
+        })
 
         req.user = user
         res.status(200).send({
